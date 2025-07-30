@@ -13,10 +13,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, Settings, LogOut, User, Languages } from "lucide-react";
+import {
+  Menu,
+  Settings,
+  LogOut,
+  User,
+  Languages,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 interface HeaderProps {
   onMenuClick?: () => void;
+  sidebarCollapsed?: boolean;
+  onSidebarToggle?: () => void;
   user?: {
     username: string;
     email: string;
@@ -25,7 +35,13 @@ interface HeaderProps {
   onLogout?: () => void;
 }
 
-export const Header = ({ onMenuClick, user, onLogout }: HeaderProps) => {
+export const Header = ({
+  onMenuClick,
+  sidebarCollapsed = false,
+  onSidebarToggle,
+  user,
+  onLogout,
+}: HeaderProps) => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -48,20 +64,34 @@ export const Header = ({ onMenuClick, user, onLogout }: HeaderProps) => {
   };
 
   return (
-    <header className='sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
-      <div className='container flex h-14 items-center'>
+    <header className='sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+      <div className='flex h-14 items-center'>
         {/* Mobile menu button */}
         <Button
           variant='ghost'
           size='icon'
-          className='md:hidden'
+          className='md:hidden ml-4'
           onClick={onMenuClick}
         >
           <Menu className='h-4 w-4' />
         </Button>
 
+        {/* Desktop sidebar toggle */}
+        <Button
+          variant='ghost'
+          size='icon'
+          className='hidden md:flex ml-4'
+          onClick={onSidebarToggle}
+        >
+          {sidebarCollapsed ? (
+            <ChevronRight className='h-4 w-4' />
+          ) : (
+            <ChevronLeft className='h-4 w-4' />
+          )}
+        </Button>
+
         {/* Logo and Title */}
-        <div className='flex items-center gap-2 mr-6'>
+        <div className='flex items-center gap-2 ml-4'>
           <div className='flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-primary-foreground'>
             <Languages className='h-4 w-4' />
           </div>
@@ -75,40 +105,11 @@ export const Header = ({ onMenuClick, user, onLogout }: HeaderProps) => {
           </div>
         </div>
 
-        {/* Navigation Links - Desktop */}
-        <nav className='hidden md:flex items-center space-x-6 text-sm font-medium flex-1'>
-          <Link
-            href='/dashboard'
-            className={`transition-colors hover:text-foreground/80 ${
-              pathname === "/dashboard"
-                ? "text-foreground"
-                : "text-foreground/60"
-            }`}
-          >
-            Dashboard
-          </Link>
-          <Link
-            href='/history'
-            className={`transition-colors hover:text-foreground/80 ${
-              pathname === "/history" ? "text-foreground" : "text-foreground/60"
-            }`}
-          >
-            History
-          </Link>
-          <Link
-            href='/settings'
-            className={`transition-colors hover:text-foreground/80 ${
-              pathname === "/settings"
-                ? "text-foreground"
-                : "text-foreground/60"
-            }`}
-          >
-            Settings
-          </Link>
-        </nav>
+        {/* Spacer to push user menu to the right */}
+        <div className='flex-1' />
 
         {/* User Menu */}
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-2 mr-4'>
           {user ? (
             <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
               <DropdownMenuTrigger asChild>

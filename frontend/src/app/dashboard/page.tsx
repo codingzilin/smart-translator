@@ -27,6 +27,7 @@ interface DashboardStats {
 
 export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [inputText, setInputText] = useState("");
   const [selectedTone, setSelectedTone] = useState("natural");
   const [loading, setLoading] = useState(false);
@@ -54,32 +55,32 @@ export default function DashboardPage() {
   const toneOptions = [
     {
       value: "natural",
-      label: "自然风格",
-      description: "自然流畅的翻译",
+      label: "Natural",
+      description: "Natural and fluent translation",
       icon: "🌿",
     },
     {
       value: "gentle",
-      label: "温和风格",
-      description: "温柔体贴的语调",
+      label: "Gentle",
+      description: "Soft and caring tone",
       icon: "🌸",
     },
     {
       value: "cute",
-      label: "可爱风格",
-      description: "活泼可爱的表达",
+      label: "Cute",
+      description: "Playful and adorable expression",
       icon: "🐱",
     },
     {
       value: "depressed",
-      label: "忧郁风格",
-      description: "沉重忧郁的语调",
+      label: "Melancholy",
+      description: "Heavy and melancholic tone",
       icon: "🌧️",
     },
     {
       value: "angry",
-      label: "愤怒风格",
-      description: "激烈愤怒的表达",
+      label: "Angry",
+      description: "Intense and furious expression",
       icon: "🔥",
     },
   ];
@@ -198,11 +199,17 @@ export default function DashboardPage() {
     console.log("Logout clicked");
   };
 
+  const handleSidebarToggle = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
   return (
     <div className='min-h-screen bg-background'>
       {/* Header */}
       <Header
         onMenuClick={() => setSidebarOpen(true)}
+        sidebarCollapsed={sidebarCollapsed}
+        onSidebarToggle={handleSidebarToggle}
         user={user}
         onLogout={handleLogout}
       />
@@ -210,13 +217,18 @@ export default function DashboardPage() {
       {/* Sidebar */}
       <Sidebar
         isOpen={sidebarOpen}
+        collapsed={sidebarCollapsed}
         onClose={() => setSidebarOpen(false)}
         user={user}
         onLogout={handleLogout}
       />
 
       {/* Main Content */}
-      <div className='md:ml-64'>
+      <div
+        className={`transition-all duration-200 ease-in-out ${
+          sidebarCollapsed ? "md:ml-16" : "md:ml-64"
+        }`}
+      >
         <div className='container mx-auto px-4 py-6 space-y-6'>
           {/* Welcome Section */}
           <div className='flex flex-col gap-2'>
@@ -228,7 +240,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Stats Cards */}
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
             <div className='bg-card border rounded-lg p-4'>
               <div className='flex items-center justify-between'>
                 <h3 className='text-sm font-medium'>Total Translations</h3>
@@ -279,9 +291,9 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+          <div className='grid grid-cols-1 xl:grid-cols-3 gap-6'>
             {/* Translation Form */}
-            <div className='lg:col-span-2 space-y-6'>
+            <div className='xl:col-span-2 space-y-6'>
               <div className='bg-card border rounded-lg p-6'>
                 <h2 className='text-lg font-semibold mb-4'>AI Translation</h2>
                 <p className='text-muted-foreground mb-4'>
@@ -301,7 +313,7 @@ export default function DashboardPage() {
                     <textarea
                       value={inputText}
                       onChange={(e) => setInputText(e.target.value)}
-                      placeholder='输入您想要翻译的文本...'
+                      placeholder='Enter text to translate...'
                       className='w-full min-h-[120px] p-3 border rounded-lg resize-none'
                       maxLength={1000}
                     />
@@ -390,8 +402,8 @@ export default function DashboardPage() {
                       </div>
                     </div>
 
-                    <div className='flex items-center justify-between pt-2'>
-                      <div className='flex items-center gap-2'>
+                    <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pt-2'>
+                      <div className='flex items-center gap-2 flex-wrap'>
                         <button
                           onClick={() =>
                             handleCopy(currentTranslation.translatedText)
@@ -453,7 +465,7 @@ export default function DashboardPage() {
                     recentTranslations.map((translation, index) => (
                       <div key={translation._id}>
                         <div className='space-y-2'>
-                          <div className='flex items-start justify-between'>
+                          <div className='flex items-start justify-between gap-2'>
                             <div className='space-y-1 flex-1 min-w-0'>
                               <p className='text-sm font-medium truncate'>
                                 {translation.originalText}
@@ -461,7 +473,7 @@ export default function DashboardPage() {
                               <p className='text-xs text-muted-foreground truncate'>
                                 {translation.translatedText}
                               </p>
-                              <div className='flex items-center gap-2'>
+                              <div className='flex items-center gap-2 flex-wrap'>
                                 <span className='text-xs px-2 py-1 border rounded'>
                                   {
                                     toneOptions.find(
@@ -481,7 +493,7 @@ export default function DashboardPage() {
                             </div>
                             <button
                               onClick={() => toggleFavorite(translation._id)}
-                              className='p-1 hover:bg-muted rounded'
+                              className='p-1 hover:bg-muted rounded flex-shrink-0'
                             >
                               <span
                                 className={
