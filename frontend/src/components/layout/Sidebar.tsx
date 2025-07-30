@@ -18,6 +18,7 @@ import {
 
 interface SidebarProps {
   isOpen?: boolean;
+  collapsed?: boolean;
   onClose?: () => void;
   user?: {
     username: string;
@@ -29,6 +30,7 @@ interface SidebarProps {
 
 export const Sidebar = ({
   isOpen = false,
+  collapsed = false,
   onClose,
   user,
   onLogout,
@@ -92,9 +94,9 @@ export const Sidebar = ({
 
       {/* Sidebar */}
       <div
-        className={`fixed left-0 top-0 z-50 h-full w-64 transform bg-background border-r transition-transform duration-200 ease-in-out md:translate-x-0 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed left-0 top-0 z-50 h-full bg-background border-r transition-all duration-200 ease-in-out md:translate-x-0 ${
+          collapsed ? "w-16" : "w-64"
+        } ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div className='flex h-full flex-col'>
           {/* Header */}
@@ -103,7 +105,9 @@ export const Sidebar = ({
               <div className='flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-primary-foreground'>
                 <Languages className='h-4 w-4' />
               </div>
-              <span className='font-semibold'>AI Translator</span>
+              {!collapsed && (
+                <span className='font-semibold'>AI Translator</span>
+              )}
             </div>
             <Button
               variant='ghost'
@@ -126,74 +130,86 @@ export const Sidebar = ({
                   <Link key={item.href} href={item.href}>
                     <Button
                       variant={isActive ? "secondary" : "ghost"}
-                      className='w-full justify-start'
+                      className={`w-full justify-start ${
+                        collapsed ? "px-2" : ""
+                      }`}
                       onClick={onClose}
+                      title={collapsed ? item.label : undefined}
                     >
-                      <Icon className='mr-2 h-4 w-4' />
-                      <div className='flex flex-col items-start'>
-                        <span className='text-sm font-medium'>
-                          {item.label}
-                        </span>
-                        <span className='text-xs text-muted-foreground'>
-                          {item.description}
-                        </span>
-                      </div>
+                      <Icon
+                        className={`${collapsed ? "h-4 w-4" : "mr-2 h-4 w-4"}`}
+                      />
+                      {!collapsed && (
+                        <div className='flex flex-col items-start'>
+                          <span className='text-sm font-medium'>
+                            {item.label}
+                          </span>
+                          <span className='text-xs text-muted-foreground'>
+                            {item.description}
+                          </span>
+                        </div>
+                      )}
                     </Button>
                   </Link>
                 );
               })}
             </div>
 
-            <Separator className='my-4' />
+            {!collapsed && <Separator className='my-4' />}
 
             {/* Quick Actions */}
-            <div className='space-y-1'>
-              <h3 className='text-xs font-medium text-muted-foreground mb-2'>
-                Quick Actions
-              </h3>
-              {quickActions.map((item) => {
-                const Icon = item.icon;
+            {!collapsed && (
+              <div className='space-y-1'>
+                <h3 className='text-xs font-medium text-muted-foreground mb-2'>
+                  Quick Actions
+                </h3>
+                {quickActions.map((item) => {
+                  const Icon = item.icon;
 
-                return (
-                  <Link key={item.href} href={item.href}>
-                    <Button
-                      variant='ghost'
-                      size='sm'
-                      className='w-full justify-start'
-                      onClick={onClose}
-                    >
-                      <Icon className='mr-2 h-3 w-3' />
-                      <span className='text-sm'>{item.label}</span>
-                    </Button>
-                  </Link>
-                );
-              })}
-            </div>
+                  return (
+                    <Link key={item.href} href={item.href}>
+                      <Button
+                        variant='ghost'
+                        size='sm'
+                        className='w-full justify-start'
+                        onClick={onClose}
+                      >
+                        <Icon className='mr-2 h-3 w-3' />
+                        <span className='text-sm'>{item.label}</span>
+                      </Button>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
           </nav>
 
           {/* User Section */}
           {user && (
             <div className='border-t p-4'>
               <div className='flex items-center gap-3'>
-                <Avatar className='h-8 w-8'>
+                <Avatar className='h-8 w-8 flex-shrink-0'>
                   <AvatarImage src={user.avatar} alt={user.username} />
                   <AvatarFallback>
                     {user.username.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <div className='flex-1 min-w-0'>
-                  <p className='text-sm font-medium truncate'>
-                    {user.username}
-                  </p>
-                  <p className='text-xs text-muted-foreground truncate'>
-                    {user.email}
-                  </p>
-                </div>
+                {!collapsed && (
+                  <div className='flex-1 min-w-0'>
+                    <p className='text-sm font-medium truncate'>
+                      {user.username}
+                    </p>
+                    <p className='text-xs text-muted-foreground truncate'>
+                      {user.email}
+                    </p>
+                  </div>
+                )}
                 <Button
                   variant='ghost'
                   size='icon'
                   onClick={onLogout}
-                  className='h-8 w-8'
+                  className='h-8 w-8 flex-shrink-0'
+                  title={collapsed ? "Logout" : undefined}
                 >
                   <LogOut className='h-4 w-4' />
                 </Button>
