@@ -219,6 +219,7 @@ export default function DashboardPage() {
         isOpen={sidebarOpen}
         collapsed={sidebarCollapsed}
         onClose={() => setSidebarOpen(false)}
+        onToggleCollapse={handleSidebarToggle}
         user={user}
         onLogout={handleLogout}
       />

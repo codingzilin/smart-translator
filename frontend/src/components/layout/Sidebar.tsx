@@ -10,16 +10,16 @@ import {
   History,
   Settings,
   Heart,
-  BookOpen,
-  Download,
   LogOut,
   X,
+  ChevronLeft,
 } from "lucide-react";
 
 interface SidebarProps {
   isOpen?: boolean;
   collapsed?: boolean;
   onClose?: () => void;
+  onToggleCollapse?: () => void;
   user?: {
     username: string;
     email: string;
@@ -32,6 +32,7 @@ export const Sidebar = ({
   isOpen = false,
   collapsed = false,
   onClose,
+  onToggleCollapse,
   user,
   onLogout,
 }: SidebarProps) => {
@@ -64,24 +65,6 @@ export const Sidebar = ({
     },
   ];
 
-  const quickActions = [
-    {
-      href: "/history",
-      label: "View History",
-      icon: BookOpen,
-    },
-    {
-      href: "/favorites",
-      label: "My Favorites",
-      icon: Heart,
-    },
-    {
-      href: "/export",
-      label: "Export Data",
-      icon: Download,
-    },
-  ];
-
   return (
     <>
       {/* Mobile overlay */}
@@ -98,6 +81,21 @@ export const Sidebar = ({
           collapsed ? "w-16" : "w-64"
         } ${isOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
+        {/* Collapse button - positioned at the edge */}
+        <Button
+          variant='ghost'
+          size='icon'
+          className='absolute -right-3 top-4 z-10 hidden md:flex h-6 w-6 rounded-full border bg-background shadow-sm hover:bg-muted'
+          onClick={onToggleCollapse}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          <ChevronLeft
+            className={`h-3 w-3 transition-transform ${
+              collapsed ? "rotate-180" : ""
+            }`}
+          />
+        </Button>
+
         <div className='flex h-full flex-col'>
           {/* Header */}
           <div className='flex h-14 items-center justify-between px-4 border-b'>
@@ -120,8 +118,8 @@ export const Sidebar = ({
           </div>
 
           {/* Navigation */}
-          <nav className='flex-1 px-4 py-4 space-y-2'>
-            <div className='space-y-1'>
+          <nav className='flex-1 px-4 py-6 space-y-6'>
+            <div className='space-y-4'>
               {navigationItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = pathname === item.href;
@@ -130,8 +128,8 @@ export const Sidebar = ({
                   <Link key={item.href} href={item.href}>
                     <Button
                       variant={isActive ? "secondary" : "ghost"}
-                      className={`w-full justify-start ${
-                        collapsed ? "px-2" : ""
+                      className={`w-full justify-start py-3 ${
+                        collapsed ? "px-2" : "px-4"
                       }`}
                       onClick={onClose}
                       title={collapsed ? item.label : undefined}
@@ -156,32 +154,6 @@ export const Sidebar = ({
             </div>
 
             {!collapsed && <Separator className='my-4' />}
-
-            {/* Quick Actions */}
-            {!collapsed && (
-              <div className='space-y-1'>
-                <h3 className='text-xs font-medium text-muted-foreground mb-2'>
-                  Quick Actions
-                </h3>
-                {quickActions.map((item) => {
-                  const Icon = item.icon;
-
-                  return (
-                    <Link key={item.href} href={item.href}>
-                      <Button
-                        variant='ghost'
-                        size='sm'
-                        className='w-full justify-start'
-                        onClick={onClose}
-                      >
-                        <Icon className='mr-2 h-3 w-3' />
-                        <span className='text-sm'>{item.label}</span>
-                      </Button>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
           </nav>
 
           {/* User Section */}
