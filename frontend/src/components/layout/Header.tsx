@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -18,7 +17,6 @@ import {
   Settings,
   LogOut,
   User,
-  Languages,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -42,21 +40,7 @@ export const Header = ({
   user,
   onLogout,
 }: HeaderProps) => {
-  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-
-  const getPageTitle = () => {
-    switch (pathname) {
-      case "/dashboard":
-        return "Translation Dashboard";
-      case "/history":
-        return "Translation History";
-      case "/settings":
-        return "Settings";
-      default:
-        return "AI Translator";
-    }
-  };
 
   const handleLogout = () => {
     onLogout?.();
@@ -89,21 +73,6 @@ export const Header = ({
             <ChevronLeft className='h-4 w-4' />
           )}
         </Button>
-
-        {/* Logo and Title */}
-        <div className='flex items-center gap-2 ml-4'>
-          <div className='flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-primary-foreground'>
-            <Languages className='h-4 w-4' />
-          </div>
-          <div className='hidden md:flex flex-col'>
-            <Link href='/dashboard' className='text-sm font-semibold'>
-              AI Translator
-            </Link>
-            <span className='text-xs text-muted-foreground'>
-              {getPageTitle()}
-            </span>
-          </div>
-        </div>
 
         {/* Spacer to push user menu to the right */}
         <div className='flex-1' />
