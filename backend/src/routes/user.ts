@@ -22,21 +22,22 @@ router.put("/profile", validateUserUpdate, UserController.updateProfile);
 router.put("/preferences", UserController.updatePreferences);
 
 // GET /api/user/preferences - Get user preferences
-router.get("/preferences", UserController.getPreferences);
+router.get("/preferences", UserController.getProfile);
 
 // PUT /api/user/password - Change password
-router.put("/password", validatePasswordChange, UserController.changePassword);
+// Note: changePassword method is in AuthController, not UserController
+// TODO: Move this route to auth.ts or implement in UserController
 
 // GET /api/user/stats - Get user statistics (translation count, etc.)
-router.get("/stats", UserController.getUserStats);
+router.get("/stats", UserController.getDashboard);
 
 // DELETE /api/user/account - Delete user account
 router.delete("/account", UserController.deleteAccount);
 
 // GET /api/user/history - Get user's translation history with pagination
-router.get("/history", UserController.getTranslationHistory);
+router.get("/history", UserController.getActivity);
 
 // POST /api/user/export - Export user data
-router.post("/export", UserController.exportUserData);
+router.post("/export", UserController.exportData);
 
 export default router;
