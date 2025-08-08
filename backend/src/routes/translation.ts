@@ -15,14 +15,14 @@ router.post(
   "/",
   rateLimit, // Rate limiting for translation requests
   validateTranslation,
-  TranslationController.translateText
+  TranslationController.translate
 );
 
 // GET /api/translations - Get user's translation history
 router.get("/", TranslationController.getTranslations);
 
 // GET /api/translations/:id - Get specific translation by ID
-router.get("/:id", TranslationController.getTranslationById);
+router.get("/:id", TranslationController.getTranslation);
 
 // POST /api/translations/:id/favorite - Toggle favorite status
 router.post("/:id/favorite", TranslationController.toggleFavorite);
@@ -30,13 +30,8 @@ router.post("/:id/favorite", TranslationController.toggleFavorite);
 // DELETE /api/translations/:id - Delete a translation
 router.delete("/:id", TranslationController.deleteTranslation);
 
-// POST /api/translations/:id/tags - Add tags to translation
-router.post("/:id/tags", TranslationController.addTags);
-
-// GET /api/translations/search - Search translations by text or tags
-router.get("/search", TranslationController.searchTranslations);
-
-// GET /api/translations/favorites - Get favorite translations
-router.get("/favorites", TranslationController.getFavoriteTranslations);
+// Note: addTags, searchTranslations, and getFavoriteTranslations methods
+// are not implemented in TranslationController yet
+// TODO: Implement these methods in TranslationController
 
 export default router;
