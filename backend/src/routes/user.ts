@@ -1,0 +1,42 @@
+// src/routes/user.ts
+import { Router } from "express";
+import { UserController } from "../controllers/UserControllers";
+import { authMiddleware } from "../middleware/auth";
+import {
+  validateUserUpdate,
+  validatePasswordChange,
+} from "../middleware/validation";
+
+const router = Router();
+
+// Apply authentication middleware to all user routes
+router.use(authMiddleware);
+
+// GET /api/user/profile - Get user profile
+router.get("/profile", UserController.getProfile);
+
+// PUT /api/user/profile - Update user profile
+router.put("/profile", validateUserUpdate, UserController.updateProfile);
+
+// PUT /api/user/preferences - Update user preferences (tone, language)
+router.put("/preferences", UserController.updatePreferences);
+
+// GET /api/user/preferences - Get user preferences
+router.get("/preferences", UserController.getPreferences);
+
+// PUT /api/user/password - Change password
+router.put("/password", validatePasswordChange, UserController.changePassword);
+
+// GET /api/user/stats - Get user statistics (translation count, etc.)
+router.get("/stats", UserController.getUserStats);
+
+// DELETE /api/user/account - Delete user account
+router.delete("/account", UserController.deleteAccount);
+
+// GET /api/user/history - Get user's translation history with pagination
+router.get("/history", UserController.getTranslationHistory);
+
+// POST /api/user/export - Export user data
+router.post("/export", UserController.exportUserData);
+
+export default router;
