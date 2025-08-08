@@ -113,17 +113,17 @@ export class TranslationController {
         },
       });
     } catch (error) {
-      logger.error("Translation failed:", error);
+      logger.error("Translation failed:", error as Error);
 
       // Return different error messages based on error type
-      if (error.message?.includes("rate limit")) {
+      if ((error as Error).message?.includes("rate limit")) {
         return res.status(429).json({
           success: false,
           message: "Too many requests, please try again later",
         });
       }
 
-      if (error.message?.includes("API key")) {
+      if ((error as Error).message?.includes("API key")) {
         return res.status(500).json({
           success: false,
           message: "Service temporarily unavailable, please try again later",
@@ -201,7 +201,7 @@ export class TranslationController {
         },
       });
     } catch (error) {
-      logger.error("Failed to get translation history:", error);
+      logger.error("Failed to get translation history:", error as Error);
       res.status(500).json({
         success: false,
         message: "Failed to get translation history",
@@ -241,7 +241,7 @@ export class TranslationController {
         },
       });
     } catch (error) {
-      logger.error("Failed to get translation record:", error);
+      logger.error("Failed to get translation record:", error as Error);
       res.status(500).json({
         success: false,
         message: "Failed to get translation record",
@@ -287,7 +287,7 @@ export class TranslationController {
         },
       });
     } catch (error) {
-      logger.error("Failed to toggle favorite status:", error);
+      logger.error("Failed to toggle favorite status:", error as Error);
       res.status(500).json({
         success: false,
         message: "Operation failed",
@@ -328,7 +328,7 @@ export class TranslationController {
         message: "Delete successful",
       });
     } catch (error) {
-      logger.error("Failed to delete translation record:", error);
+      logger.error("Failed to delete translation record:", error as Error);
       res.status(500).json({
         success: false,
         message: "Delete failed",
@@ -383,7 +383,10 @@ export class TranslationController {
         message: `Successfully deleted ${ids.length} records`,
       });
     } catch (error) {
-      logger.error("Failed to batch delete translation records:", error);
+      logger.error(
+        "Failed to batch delete translation records:",
+        error as Error
+      );
       res.status(500).json({
         success: false,
         message: "Delete failed",
@@ -450,7 +453,7 @@ export class TranslationController {
         },
       });
     } catch (error) {
-      logger.error("Failed to get translation statistics:", error);
+      logger.error("Failed to get translation statistics:", error as Error);
       res.status(500).json({
         success: false,
         message: "Failed to get statistics",

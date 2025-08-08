@@ -1,9 +1,9 @@
 // src/services/authService.ts
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { User } from '../models/User';
-import { logger } from '../utils/logger';
-import { Types } from 'mongoose';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { User, IUser } from "../models/User";
+import { logger } from "../utils/logger";
+import { Types } from "mongoose";
 
 interface RegisterRequest {
   email: string;
@@ -45,12 +45,12 @@ interface UserProfile {
 export class AuthService {
   private readonly saltRounds = 12;
   private readonly jwtSecret: string;
-  private readonly jwtExpiresIn = '7d'; // 7 days
+  private readonly jwtExpiresIn = "7d"; // 7 days
 
   constructor() {
-    this.jwtSecret = process.env.JWT_SECRET || '';
+    this.jwtSecret = process.env.JWT_SECRET || "";
     if (!this.jwtSecret) {
-      throw new Error('JWT_SECRET is not defined in environment variables');
+      throw new Error("JWT_SECRET is not defined in environment variables");
     }
   }
 
@@ -60,15 +60,15 @@ export class AuthService {
 
       // Check if user already exists
       const existingUser = await User.findOne({
-        $or: [{ email }, { username }]
+        $or: [{ email }, { username }],
       });
 
       if (existingUser) {
         if (existingUser.email === email) {
-          throw new Error('User with this email already exists');
+          throw new Error("User with this email already exists");
         }
         if (existingUser.username === username) {
-          throw new Error('Username is already taken');
+          throw new Error("Username is already taken");
         }
       }
 
@@ -83,9 +83,9 @@ export class AuthService {
         createdAt: new Date(),
         lastLoginAt: null,
         preferences: {
-          defaultTone: 'natural',
-          language: 'en'
-        }
+          defaultTone: "natural",
+          language: "en",
+        },
       });
 
       const savedUser = await user.save();
@@ -95,26 +95,25 @@ export class AuthService {
 
       // Update last login time
       await User.findByIdAndUpdate(savedUser._id, {
-        lastLoginAt: new Date()
+        lastLoginAt: new Date(),
       });
 
-      logger.info('User registered successfully', {
-        userId: savedUser._id,
+      logger.info("User registered successfully", {
+        userId: savedUser._id?.toString() || "",
         email: savedUser.email,
-        username: savedUser.username
+        username: savedUser.username,
       });
 
       return {
         user: this.mapUserToProfile(savedUser),
-        token
+        token,
       };
-
     } catch (error) {
-      logger.error('Registration failed:', error);
+      logger.error("Registration failed:", error as Error);
       if (error instanceof Error) {
         throw error;
       }
-      throw new Error('Registration failed');
+      throw new Error("Registration failed");
     }
   }
 
@@ -125,14 +124,17 @@ export class AuthService {
       // Find user by email
       const user = await User.findOne({ email });
       if (!user) {
-        throw new Error('Invalid email or password');
+        throw new Error("Invalid email or password");
       }
 
       // Verify password
       const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
       if (!isPasswordValid) {
-        logger.warn('Failed login attempt', { email, userId: user._id });
-        throw new Error('Invalid email or password');
+        logger.warn("Failed login attempt", {
+          email,
+          userId: user._id?.toString() || "",
+        });
+        throw new Error("Invalid email or password");
       }
 
       // Generate JWT token
@@ -140,65 +142,67 @@ export class AuthService {
 
       // Update last login time
       await User.findByIdAndUpdate(user._id, {
-        lastLoginAt: new Date()
+        lastLoginAt: new Date(),
       });
 
-      logger.info('User logged in successfully', {
-        userId: user._id,
+      logger.info("User logged in successfully", {
+        userId: user._id?.toString() || "",
         email: user.email,
-        username: user.username
+        username: user.username,
       });
 
       return {
         user: this.mapUserToProfile(user),
-        token
+        token,
       };
-
     } catch (error) {
-      logger.error('Login failed:', error);
+      logger.error("Login failed:", error as Error);
       if (error instanceof Error) {
         throw error;
       }
-      throw new Error('Login failed');
+      throw new Error("Login failed");
     }
   }
 
   async getUserById(userId: string): Promise<UserProfile | null> {
     try {
-      const user = await User.findById(new Types.ObjectId(userId)).select('-passwordHash');
-      
+      const user = await User.findById(new Types.ObjectId(userId)).select(
+        "-passwordHash"
+      );
+
       if (!user) {
         return null;
       }
 
       return this.mapUserToProfile(user);
-
     } catch (error) {
-      logger.error('Error fetching user by ID:', error);
-      throw new Error('Failed to fetch user');
+      logger.error("Error fetching user by ID:", error as Error);
+      throw new Error("Failed to fetch user");
     }
   }
 
   async getUserByEmail(email: string): Promise<UserProfile | null> {
     try {
-      const user = await User.findOne({ email }).select('-passwordHash');
-      
+      const user = await User.findOne({ email }).select("-passwordHash");
+
       if (!user) {
         return null;
       }
 
       return this.mapUserToProfile(user);
-
     } catch (error) {
-      logger.error('Error fetching user by email:', error);
-      throw new Error('Failed to fetch user');
+      logger.error("Error fetching user by email:", error as Error);
+      throw new Error("Failed to fetch user");
     }
   }
 
-  async updateProfile(userId: string, updates: {
-    username?: string;
-    email?: string;
-  }): Promise<UserProfile> {
+  async updateProfile(
+    userId: string,
+    updates: {
+      username?: string;
+      email?: string;
+    }
+  ): Promise<UserProfile> {
     try {
       const { username, email } = updates;
 
@@ -212,14 +216,14 @@ export class AuthService {
 
         if (orConditions.length > 0) {
           conflictQuery.$or = orConditions;
-          
+
           const existingUser = await User.findOne(conflictQuery);
           if (existingUser) {
             if (existingUser.username === username) {
-              throw new Error('Username is already taken');
+              throw new Error("Username is already taken");
             }
             if (existingUser.email === email) {
-              throw new Error('Email is already registered');
+              throw new Error("Email is already registered");
             }
           }
         }
@@ -229,84 +233,136 @@ export class AuthService {
         new Types.ObjectId(userId),
         { ...updates },
         { new: true }
-      ).select('-passwordHash');
+      ).select("-passwordHash");
 
       if (!updatedUser) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
 
-      logger.info('User profile updated', {
+      logger.info("User profile updated", {
         userId,
-        updates: Object.keys(updates)
+        updates: Object.keys(updates),
       });
 
       return this.mapUserToProfile(updatedUser);
-
     } catch (error) {
-      logger.error('Error updating user profile:', error);
+      logger.error("Error updating user profile:", error as Error);
       if (error instanceof Error) {
         throw error;
       }
-      throw new Error('Failed to update profile');
+      throw new Error("Failed to update profile");
     }
   }
 
-  async updatePreferences(userId: string, preferences: {
-    defaultTone?: string;
-    language?: string;
-  }): Promise<UserProfile> {
+  async updatePreferences(
+    userId: string,
+    preferences: {
+      defaultTone?: string;
+      language?: string;
+    }
+  ): Promise<UserProfile> {
     try {
-      const validTones = ['natural', 'gentle', 'cute', 'depressed', 'angry'];
-      
-      if (preferences.defaultTone && !validTones.includes(preferences.defaultTone)) {
-        throw new Error('Invalid tone preference');
+      const validTones = ["natural", "gentle", "cute", "depressed", "angry"];
+
+      if (
+        preferences.defaultTone &&
+        !validTones.includes(preferences.defaultTone)
+      ) {
+        throw new Error("Invalid tone preference");
       }
 
       const updatedUser = await User.findByIdAndUpdate(
         new Types.ObjectId(userId),
-        { 
+        {
           $set: {
-            'preferences.defaultTone': preferences.defaultTone,
-            'preferences.language': preferences.language
-          }
+            "preferences.defaultTone": preferences.defaultTone,
+            "preferences.language": preferences.language,
+          },
         },
         { new: true }
-      ).select('-passwordHash');
+      ).select("-passwordHash");
 
       if (!updatedUser) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
 
-      logger.info('User preferences updated', {
+      logger.info("User preferences updated", {
         userId,
-        preferences
+        preferences,
       });
 
       return this.mapUserToProfile(updatedUser);
-
     } catch (error) {
-      logger.error('Error updating user preferences:', error);
+      logger.error("Error updating user preferences:", error as Error);
       if (error instanceof Error) {
         throw error;
       }
-      throw new Error('Failed to update preferences');
+      throw new Error("Failed to update preferences");
     }
   }
 
-  async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
+  async changePassword(
+    userId: string,
+    currentPassword: string,
+    newPassword: string
+  ): Promise<void> {
     try {
       // Find user with password hash
       const user = await User.findById(new Types.ObjectId(userId));
       if (!user) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
 
       // Verify current password
-      const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.passwordHash);
+      const isCurrentPasswordValid = await bcrypt.compare(
+        currentPassword,
+        user.passwordHash
+      );
       if (!isCurrentPasswordValid) {
-        throw new Error('Current password is incorrect');
+        throw new Error("Current password is incorrect");
       }
 
       // Hash new password
-      const newPasswordHash = await
-      
+      const newPasswordHash = await bcrypt.hash(newPassword, this.saltRounds);
+
+      // Update user's password
+      await User.findByIdAndUpdate(new Types.ObjectId(userId), {
+        passwordHash: newPasswordHash,
+      });
+
+      logger.info("Password changed successfully", { userId });
+    } catch (error) {
+      logger.error("Error changing password:", error as Error);
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error("Failed to change password");
+    }
+  }
+
+  private generateToken(user: any): string {
+    const payload = {
+      userId: user._id,
+      email: user.email,
+      username: user.username,
+    };
+
+    return jwt.sign(payload, this.jwtSecret, {
+      expiresIn: this.jwtExpiresIn,
+    });
+  }
+
+  private mapUserToProfile(user: any): UserProfile {
+    return {
+      id: user._id.toString(),
+      email: user.email,
+      username: user.username,
+      createdAt: user.createdAt,
+      lastLoginAt: user.lastLoginAt,
+      preferences: {
+        defaultTone: user.preferences?.defaultTone || "natural",
+        language: user.preferences?.language || "en",
+      },
+    };
+  }
+}
