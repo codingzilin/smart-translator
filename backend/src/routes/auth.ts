@@ -16,6 +16,6 @@ router.post("/login", validateLogin, AuthController.login);
 router.post("/logout", authMiddleware, AuthController.logout);
 
 // GET /api/auth/me - Get current user profile
-router.get("/me", authMiddleware, AuthController.getCurrentUser);
+router.get("/me", authMiddleware, AuthController.me);
 
 export default router;
