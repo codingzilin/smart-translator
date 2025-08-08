@@ -84,7 +84,7 @@ export class TranslationService {
       // Record in translation history
       await this.recordTranslationHistory(
         userId,
-        savedTranslation._id.toString()
+        savedTranslation._id?.toString() || ""
       );
 
       logger.info("Translation created successfully", {
@@ -95,7 +95,7 @@ export class TranslationService {
 
       return this.mapTranslationToResponse(savedTranslation);
     } catch (error) {
-      logger.error("Translation creation failed:", error);
+      logger.error("Translation creation failed:", error as Error);
       throw new Error(
         `Translation failed: ${
           error instanceof Error ? error.message : "Unknown error"
@@ -123,7 +123,7 @@ export class TranslationService {
 
       return this.mapTranslationToResponse(translation);
     } catch (error) {
-      logger.error("Error fetching translation by ID:", error);
+      logger.error("Error fetching translation by ID:", error as Error);
       throw new Error("Failed to fetch translation");
     }
   }
@@ -146,7 +146,7 @@ export class TranslationService {
       } = options;
 
       const skip = (page - 1) * limit;
-      const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+      const sort: any = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
 
       const [translations, totalCount] = await Promise.all([
         Translation.find({ userId: new Types.ObjectId(userId) })
@@ -166,7 +166,7 @@ export class TranslationService {
         totalPages,
       };
     } catch (error) {
-      logger.error("Error fetching user translations:", error);
+      logger.error("Error fetching user translations:", error as Error);
       throw new Error("Failed to fetch translations");
     }
   }
@@ -195,7 +195,7 @@ export class TranslationService {
       } = searchOptions;
 
       const skip = (page - 1) * limit;
-      const sort = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
+      const sort: any = { [sortBy]: sortOrder === "desc" ? -1 : 1 };
 
       // Build search filter
       const filter: any = { userId: new Types.ObjectId(userId) };
@@ -239,7 +239,7 @@ export class TranslationService {
         totalPages,
       };
     } catch (error) {
-      logger.error("Error searching translations:", error);
+      logger.error("Error searching translations:", error as Error);
       throw new Error("Failed to search translations");
     }
   }
@@ -269,7 +269,7 @@ export class TranslationService {
 
       return this.mapTranslationToResponse(updatedTranslation);
     } catch (error) {
-      logger.error("Error toggling favorite:", error);
+      logger.error("Error toggling favorite:", error as Error);
       throw new Error("Failed to toggle favorite status");
     }
   }
@@ -294,7 +294,7 @@ export class TranslationService {
       logger.info("Translation deleted", { translationId: id, userId });
       return true;
     } catch (error) {
-      logger.error("Error deleting translation:", error);
+      logger.error("Error deleting translation:", error as Error);
       throw new Error("Failed to delete translation");
     }
   }
@@ -334,7 +334,7 @@ export class TranslationService {
 
       return this.mapTranslationToResponse(updatedTranslation);
     } catch (error) {
-      logger.error("Error adding tags:", error);
+      logger.error("Error adding tags:", error as Error);
       throw new Error("Failed to add tags");
     }
   }
@@ -356,7 +356,7 @@ export class TranslationService {
 
       return await this.searchTranslations(userId, searchOptions);
     } catch (error) {
-      logger.error("Error fetching favorite translations:", error);
+      logger.error("Error fetching favorite translations:", error as Error);
       throw new Error("Failed to fetch favorite translations");
     }
   }
@@ -413,7 +413,7 @@ export class TranslationService {
         recentTranslationsCount,
       };
     } catch (error) {
-      logger.error("Error fetching user stats:", error);
+      logger.error("Error fetching user stats:", error as Error);
       throw new Error("Failed to fetch user statistics");
     }
   }
@@ -431,7 +431,7 @@ export class TranslationService {
 
       await historyEntry.save();
     } catch (error) {
-      logger.warn("Failed to record translation history:", error);
+      logger.warn("Failed to record translation history:", error as Error);
       // Non-critical error, don't throw
     }
   }

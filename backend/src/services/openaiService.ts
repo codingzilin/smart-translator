@@ -62,7 +62,7 @@ export class OpenAIService {
         response.choices[0]?.message?.content?.trim().toLowerCase() || "unknown"
       );
     } catch (error) {
-      logger.warn("Language detection failed:", error);
+      logger.warn("Language detection failed:", error as Error);
       return "unknown";
     }
   }
@@ -193,7 +193,7 @@ Requirements:
         confidence,
       };
     } catch (error) {
-      logger.error("Detailed translation failed:", error);
+      logger.error("Detailed translation failed:", error as Error);
       throw error;
     }
   }
@@ -231,7 +231,7 @@ Requirements:
       });
       return true;
     } catch (error) {
-      logger.error("OpenAI API key validation failed:", error);
+      logger.error("OpenAI API key validation failed:", error as Error);
       return false;
     }
   }
@@ -244,7 +244,7 @@ Requirements:
         .map((model) => model.id)
         .sort();
     } catch (error) {
-      logger.error("Failed to fetch available models:", error);
+      logger.error("Failed to fetch available models:", error as Error);
       return ["gpt-3.5-turbo"]; // Return default model
     }
   }

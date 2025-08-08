@@ -100,7 +100,7 @@ export class AuthController {
 
       logger.info(`New user registered successfully: ${email}`);
 
-      res.status(201).json({
+      return res.status(201).json({
         success: true,
         message: "Registration successful",
         data: {
@@ -114,8 +114,8 @@ export class AuthController {
         },
       });
     } catch (error) {
-      logger.error("Registration failed:", error);
-      res.status(500).json({
+      logger.error("Registration failed:", error as Error);
+      return res.status(500).json({
         success: false,
         message: "Internal server error",
       });
@@ -166,7 +166,7 @@ export class AuthController {
 
       logger.info(`User logged in successfully: ${email}`);
 
-      res.json({
+      return res.json({
         success: true,
         message: "Login successful",
         data: {
@@ -181,8 +181,8 @@ export class AuthController {
         },
       });
     } catch (error) {
-      logger.error("Login failed:", error);
-      res.status(500).json({
+      logger.error("Login failed:", error as Error);
+      return res.status(500).json({
         success: false,
         message: "Internal server error",
       });
@@ -202,7 +202,7 @@ export class AuthController {
         });
       }
 
-      res.json({
+      return res.json({
         success: true,
         data: {
           user: {
@@ -216,8 +216,8 @@ export class AuthController {
         },
       });
     } catch (error) {
-      logger.error("Failed to get user information:", error);
-      res.status(500).json({
+      logger.error("Failed to get user information:", error as Error);
+      return res.status(500).json({
         success: false,
         message: "Internal server error",
       });
@@ -230,13 +230,13 @@ export class AuthController {
       // In a real application, you can add token blacklist logic here
       logger.info(`User logged out: ${req.user.email}`);
 
-      res.json({
+      return res.json({
         success: true,
         message: "Logout successful",
       });
     } catch (error) {
-      logger.error("Logout failed:", error);
-      res.status(500).json({
+      logger.error("Logout failed:", error as Error);
+      return res.status(500).json({
         success: false,
         message: "Internal server error",
       });
@@ -302,13 +302,13 @@ export class AuthController {
 
       logger.info(`User changed password successfully: ${user.email}`);
 
-      res.json({
+      return res.json({
         success: true,
         message: "Password changed successfully",
       });
     } catch (error) {
-      logger.error("Failed to change password:", error);
-      res.status(500).json({
+      logger.error("Failed to change password:", error as Error);
+      return res.status(500).json({
         success: false,
         message: "Internal server error",
       });
@@ -328,7 +328,7 @@ export class AuthController {
         { expiresIn: "7d" }
       );
 
-      res.json({
+      return res.json({
         success: true,
         message: "Token refreshed successfully",
         data: {
@@ -336,8 +336,8 @@ export class AuthController {
         },
       });
     } catch (error) {
-      logger.error("Token refresh failed:", error);
-      res.status(500).json({
+      logger.error("Token refresh failed:", error as Error);
+      return res.status(500).json({
         success: false,
         message: "Internal server error",
       });

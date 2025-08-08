@@ -53,7 +53,7 @@ export class UserController {
         },
       });
     } catch (error) {
-      logger.error("Failed to get user profile:", error);
+      logger.error("Failed to get user profile:", error as Error);
       res.status(500).json({
         success: false,
         message: "Failed to get user profile",
@@ -151,7 +151,7 @@ export class UserController {
         },
       });
     } catch (error) {
-      logger.error("Failed to update user profile:", error);
+      logger.error("Failed to update user profile:", error as Error);
       res.status(500).json({
         success: false,
         message: "Failed to update profile",
@@ -207,7 +207,8 @@ export class UserController {
             message: "Invalid theme setting",
           });
         }
-        user.preferences.theme = theme;
+        // Note: theme property is not supported in current User model
+        // user.preferences.theme = theme;
       }
 
       await user.save();
@@ -222,7 +223,7 @@ export class UserController {
         },
       });
     } catch (error) {
-      logger.error("Failed to update preferences:", error);
+      logger.error("Failed to update preferences:", error as Error);
       res.status(500).json({
         success: false,
         message: "Failed to update preferences",
@@ -269,7 +270,7 @@ export class UserController {
         },
       });
     } catch (error) {
-      logger.error("Failed to get user activity records:", error);
+      logger.error("Failed to get user activity records:", error as Error);
       res.status(500).json({
         success: false,
         message: "Failed to get activity records",
@@ -346,7 +347,7 @@ export class UserController {
         },
       });
     } catch (error) {
-      logger.error("Failed to get dashboard data:", error);
+      logger.error("Failed to get dashboard data:", error as Error);
       res.status(500).json({
         success: false,
         message: "Failed to get dashboard data",
@@ -399,7 +400,7 @@ export class UserController {
         message: "Account deleted successfully",
       });
     } catch (error) {
-      logger.error("Failed to delete user account:", error);
+      logger.error("Failed to delete user account:", error as Error);
       res.status(500).json({
         success: false,
         message: "Failed to delete account",
@@ -456,7 +457,7 @@ export class UserController {
         data: exportData,
       });
     } catch (error) {
-      logger.error("Failed to export user data:", error);
+      logger.error("Failed to export user data:", error as Error);
       res.status(500).json({
         success: false,
         message: "Failed to export data",
@@ -512,7 +513,7 @@ export class UserController {
         mostUsedTone,
       };
     } catch (error) {
-      logger.error("Failed to get user statistics:", error);
+      logger.error("Failed to get user statistics:", error as Error);
       return {
         totalTranslations: 0,
         favoriteCount: 0,
@@ -540,7 +541,6 @@ export class UserController {
       user.preferences = {
         defaultTone: "natural",
         language: "zh-CN",
-        theme: "light",
       };
 
       await user.save();
@@ -555,7 +555,7 @@ export class UserController {
         },
       });
     } catch (error) {
-      logger.error("Failed to reset preferences:", error);
+      logger.error("Failed to reset preferences:", error as Error);
       res.status(500).json({
         success: false,
         message: "Failed to reset preferences",
