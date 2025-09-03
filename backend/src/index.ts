@@ -70,7 +70,7 @@ const startServer = async () => {
       logger.info(`Health check: http://localhost:${PORT}/health`);
     });
   } catch (error) {
-    logger.error("Failed to start server:", error);
+    logger.error("Failed to start server:", error as Error);
     process.exit(1);
   }
 };

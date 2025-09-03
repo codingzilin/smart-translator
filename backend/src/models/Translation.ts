@@ -97,7 +97,7 @@ translationSchema.methods.addTag = function (tag: string) {
 
 // Instance method to remove tags
 translationSchema.methods.removeTag = function (tag: string) {
-  this.tags = this.tags.filter((t) => t !== tag);
+  this.tags = this.tags.filter((t: string) => t !== tag);
   return this.save();
 };
 

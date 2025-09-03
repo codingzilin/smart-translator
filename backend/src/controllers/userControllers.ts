@@ -54,7 +54,7 @@ export class UserController {
       });
     } catch (error) {
       logger.error("Failed to get user profile:", error as Error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Failed to get user profile",
       });
@@ -152,7 +152,7 @@ export class UserController {
       });
     } catch (error) {
       logger.error("Failed to update user profile:", error as Error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Failed to update profile",
       });
@@ -224,7 +224,7 @@ export class UserController {
       });
     } catch (error) {
       logger.error("Failed to update preferences:", error as Error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Failed to update preferences",
       });
@@ -401,7 +401,7 @@ export class UserController {
       });
     } catch (error) {
       logger.error("Failed to delete user account:", error as Error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Failed to delete account",
       });
@@ -458,7 +458,7 @@ export class UserController {
       });
     } catch (error) {
       logger.error("Failed to export user data:", error as Error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Failed to export data",
       });
@@ -556,7 +556,7 @@ export class UserController {
       });
     } catch (error) {
       logger.error("Failed to reset preferences:", error as Error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Failed to reset preferences",
       });

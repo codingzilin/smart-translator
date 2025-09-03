@@ -16,7 +16,7 @@ const rateLimitStore: RateLimitStore = {};
 setInterval(() => {
   const now = Date.now();
   Object.keys(rateLimitStore).forEach((key) => {
-    if (rateLimitStore[key].resetTime < now) {
+    if (rateLimitStore[key] && rateLimitStore[key].resetTime < now) {
       delete rateLimitStore[key];
     }
   });
@@ -93,7 +93,7 @@ const createRateLimiter = (options: RateLimitOptions) => {
         if (res.statusCode < 400) {
           rateLimitData.count = Math.max(0, rateLimitData.count - 1);
         }
-        return originalEnd.apply(this, args);
+        return originalEnd.apply(this, args as any);
       };
     }
 

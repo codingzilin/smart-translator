@@ -130,7 +130,7 @@ export class TranslationController {
         });
       }
 
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Translation failed, please try again",
       });
@@ -242,7 +242,7 @@ export class TranslationController {
       });
     } catch (error) {
       logger.error("Failed to get translation record:", error as Error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Failed to get translation record",
       });
@@ -288,7 +288,7 @@ export class TranslationController {
       });
     } catch (error) {
       logger.error("Failed to toggle favorite status:", error as Error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Operation failed",
       });
@@ -329,7 +329,7 @@ export class TranslationController {
       });
     } catch (error) {
       logger.error("Failed to delete translation record:", error as Error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Delete failed",
       });
@@ -387,7 +387,7 @@ export class TranslationController {
         "Failed to batch delete translation records:",
         error as Error
       );
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Delete failed",
       });
@@ -454,7 +454,7 @@ export class TranslationController {
       });
     } catch (error) {
       logger.error("Failed to get translation statistics:", error as Error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: "Failed to get statistics",
       });

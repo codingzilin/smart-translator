@@ -32,7 +32,7 @@ const handleValidationErrors = (
 };
 
 // User registration validation
-export const validateRegistration: ValidationChain[] = [
+export const validateRegistration = [
   body("email")
     .isEmail()
     .normalizeEmail()
@@ -63,7 +63,7 @@ export const validateRegistration: ValidationChain[] = [
 ];
 
 // User login validation
-export const validateLogin: ValidationChain[] = [
+export const validateLogin = [
   body("email")
     .isEmail()
     .normalizeEmail()
@@ -75,7 +75,7 @@ export const validateLogin: ValidationChain[] = [
 ];
 
 // Translation validation
-export const validateTranslation: ValidationChain[] = [
+export const validateTranslation = [
   body("text")
     .notEmpty()
     .isLength({ min: 1, max: 5000 })
@@ -103,7 +103,7 @@ export const validateTranslation: ValidationChain[] = [
 ];
 
 // User profile update validation
-export const validateUserUpdate: ValidationChain[] = [
+export const validateUserUpdate = [
   body("username")
     .optional()
     .isLength({ min: 3, max: 30 })

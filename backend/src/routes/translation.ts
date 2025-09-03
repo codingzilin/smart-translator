@@ -1,6 +1,6 @@
 // src/routes/translation.ts
 import { Router } from "express";
-import { TranslationController } from "../controllers/TranslationControllers";
+import { TranslationController } from "../controllers/translationControllers";
 import { authMiddleware } from "../middleware/auth";
 import { validateTranslation } from "../middleware/validation";
 import { rateLimit } from "../middleware/rateLimit";
