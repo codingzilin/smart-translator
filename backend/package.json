@@ -1,8 +1,35 @@
 {
+  "name": "smart-translator-backend",
+  "version": "1.0.0",
+  "description": "智能翻译应用后端服务",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "dev:watch": "nodemon src/index.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts"
+  },
+  "keywords": [
+    "translation",
+    "openai",
+    "ai",
+    "nodejs",
+    "typescript",
+    "express"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "bcryptjs": "^3.0.2",
+    "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.2",
@@ -15,6 +42,12 @@
     "@types/mongoose": "^5.11.96",
     "@types/node": "^24.2.1",
     "@types/winston": "^2.4.4",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }

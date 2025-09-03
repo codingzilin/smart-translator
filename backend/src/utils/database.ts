@@ -314,3 +314,6 @@ export const database = new Database();
 
 // Export the class for testing purposes
 export { Database };
+
+// Export connect function for convenience
+export const connectDatabase = () => database.connect();
